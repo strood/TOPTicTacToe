@@ -1,3 +1,32 @@
+// ========== Javascript Tic-Tac-Toe ===============
+
+
+// ========== Players ============
+// Players will be stored in objects
+const playerFactory = (name, token, ai) => {
+  // Check if human, will setup differently if AI
+  let bot = ai || false;
+  const getName = () => name;
+  const getToken = () => token;
+  const isBot = () => bot;
+
+  return {getName, getToken, isBot}
+}
+
+
+// =========== Game ==============
+// Object to hold game details
+const Game = (player1, player2, board) => {
+  // Returns  a new game object to be played with given chars and new board
+  // Result will be false to start, change to winner/ tie based on outcome
+  let result = false;
+  // Randomly choose who goes first
+  let currentPlayer = [player1, player2][Math.floor(Math.random() * 2)];
+  return { player1, player2, board, result, currentPlayer}
+}
+
+
+// ========== Board =====================
 //  Gameboard holds the board as an array, and functions to interact with board
 // Built as a module (Revealing module pattern)
 const gameBoard = (() => {
@@ -7,7 +36,6 @@ const gameBoard = (() => {
   const winner = "";
 
   // --- Functions to interact with board ---
-
   // Return board at current state
   const getBoard = () => board;
 
@@ -23,87 +51,76 @@ const gameBoard = (() => {
   };
 
   // Check to see if board full or won, return false if incomplete, true if won, "tie" if full
-  const _checkBoard = () => {
-    if (!board.any("")) {
+  const checkBoard = () => {
+    console.log(board.slice(0,3).all)
+    if (!board.includes("")) {
       console.log("Board is full")
-    } else if (_playerWin) {
+    } else if (_playerWin(board)) {
       console.log("Winner!")
+    } else {
+      console.log("play-On!")
     }
   }
 
-  const _playerWin = () => {
+  const _playerWin = (board) => {
     // If any wins, return true, else false
-    if (_horizontalWin || _verticalWin || _diagonalWin) {
+    if (_horizontalWin(board) || _verticalWin(board) || _diagonalWin(board)) {
+      console.log("Player won!")
       return true
     } else {
       return false
     }
   }
 
-  const _horizontalWin = () => {
+  const _horizontalWin = (board) => {
     // Return true if any horizontal slize all equal to x or o, else false
-    if (board.slice(0,2).all("X") || board.slice(0,2).all("O")) {
+    if (board.slice(0,3).every((spot) => spot === "X") || board.slice(0,3).every((spot) => spot === "O")) {
       return true;
-    } else if (board.slice(3,5).all("X") || board.slice(3,5).all("O")) {
+    } else if (board.slice(3,6).every((spot) => spot === "X") || board.slice(3,6).every((spot) => spot === "O")) {
       return true;
-    } else if (board.slice(6,8).all("X") || board.slice(6,8).all("O")) {
+    } else if (board.slice(6).every((spot) => spot === "X") || board.slice(6).every((spot) => spot === "O")) {
       return true;
     } else {
       return false;
+
     }
   }
-  const _verticalWin = () => {
+  const _verticalWin = (board) => {
     // return true if any vertical chunk all equal X or O, else false
-    if (board[0] == board[3] && board[0] == board[6]) {
+    if (board[0] === board[3] && board[0] === board[6] && (board[0] === "O" || board[0] === "X")) {
       return true;
-    } else if (board[1] == board[4] && board[1] == board[7]) {
+    } else if (board[1] === board[4] && board[1] === board[7] && (board[1] === "O" || board[1] === "X")) {
       return true;
-    } else if (board[2] == board[5] && board[2] == board[8]) {
+    } else if (board[2] === board[5] && board[2] === board[8] && (board[2] === "O" || board[2] === "X")) {
       return true;
     } else {
       return false
+
     }
   }
-  const _diagonalWin = () => {
+  const _diagonalWin = (board) => {
     // return true if any horizontal chunk all equal X or O, else false
-    if (board[0] == board[4] && board[0] == board[8]) {
+    if (board[0] === board[4] && board[0] === board[8] && (board[0] === "O" || board[0] === "X")) {
       return true;
-    } else if (board[2] == board[4] && board[2] == board[6]) {
+
+    } else if (board[2] === board[4] && board[2] === board[6] && (board[2] === "O" || board[2] === "X")) {
       return true;
+
     } else {
       return false
+
     }
   }
   // Exposing our public functions
   return {
     getBoard:getBoard,
-    playMove:playMove
+    playMove:playMove,
+    checkBoard: checkBoard,
   };
 })();
 
-// Players will be stored in objects
-const playerFactory = (name, token, ai) => {
-  // Check if human, will setup differently if AI
-  let bot = ai || false;
-  const getName = () => name;
-  const getToken = () => token;
-  const isBot = () => bot;
 
-  return {getName, getToken, isBot}
-}
-
-
-
-// Object to hold game details
-const Game = (player1, player2, board) => {
-  // Returns  a new game object to be played with given chars and new board
-  // Result will be false to start, change to winner/ tie based on outcome
-  let result = false;
-  let currentPlayer = player1;
-  return { player1, player2, board, result, currentPlayer}
-}
-
-
+// ------- Display Controller -----------
 
 // Function to render contents of gameboard array to page
 // (Maybe use to add all stages of game to page too)
@@ -149,21 +166,15 @@ const displayController = ((game) => {
     let p2AiLabel = document.createElement('label');
     p2AiLabel.textContent = "- AI?"
 
+    // Make Button
     let nameButton = document.createElement('button')
     nameButton.textContent = "- Play Game -"
-    let startGameFunct = () => {
-      // Create players from info on page, then remove playerSelect
 
+    let startGameFunct = () => {
+
+      // Create players from info on page, then remove playerSelect
       let player1 = playerFactory(p1NameInput.value, "X", (p1AiInput.checked) ? true : false);
       let player2 = playerFactory(p2NameInput.value, "O", (p2AiInput.checked) ? true : false);
-      console.log(player1);
-      console.log(typeof(player2));
-      console.log(player1.getName());
-      console.log(player2.getName());
-      console.log(player1.getToken());
-      console.log(player2.getToken());
-      console.log(player1.isBot());
-      console.log(player2.isBot());
 
       // Setup new game
       let game = Game(player1, player2, gameBoard);
@@ -173,6 +184,7 @@ const displayController = ((game) => {
 
       // Pass new game to board render
       renderBoard(game);
+
     }
     nameButton.addEventListener('click', startGameFunct)
 
@@ -240,7 +252,7 @@ const displayController = ((game) => {
     boardBox.setAttribute('class', 'boardBox');
     let body = document.querySelector('body');
     body.insertAdjacentElement("afterbegin", boardBox);
-
+    renderPlayers(game);
     // Loop through our boards array and set up spots accordingly
     // Go backwards so we can push appends out to end
     // Set count for data-keys
@@ -292,13 +304,13 @@ const displayController = ((game) => {
 
   const reRenderBoard = (game) => {
     let boardBox = document.querySelector(".boardBox");
-
+    let turnDiv = document.getElementById('turnDiv');
+    turnDiv.lastChild.remove();
+    turnDiv.firstChild.remove();
+    renderTurn(game, turnDiv);
     for (let child of boardBox.children) {
-        console.log(child)
-        console.log(child.textContent)
-        console.log(game.board.getBoard()[child.getAttribute("data-num")])
         if (child.textContent === game.board.getBoard()[child.getAttribute("data-num")]) {
-          // Leave it as is if exact same
+          // Leave it as is if exact same - could do an error or something here
         } else {
           // Update text if its been changed
           child.textContent = game.board.getBoard()[child.getAttribute("data-num")]
@@ -306,8 +318,111 @@ const displayController = ((game) => {
     }
   }
 
+  // Render the player info sections during game
+  const renderPlayers = (game) => {
+
+    let boardBox = document.querySelector('.boardBox');
+    let body = document.querySelector('body');
+
+    // Parent Holder div
+    let pDiv = document.createElement('div');
+    pDiv.setAttribute('class', 'pDiv');
+
+    // Player 1
+    let p1Div = document.createElement('div');
+    let p1Name = document.createElement('h2');
+    p1Name.textContent = `${game.player1.getName()}`;
+
+    if (game.player1.isBot()) {
+      // Append bot icon and style to fit on line
+      let botIcon = document.createElement('i')
+      let nameBox = document.createElement('div')
+      botIcon.setAttribute('class', 'fas fa-robot');
+      nameBox.appendChild(p1Name);
+      p1Name.insertAdjacentElement("afterend", botIcon);
+      p1Div.appendChild(nameBox);
+
+    } else {
+      // Just add name
+      p1Div.appendChild(p1Name);
+    }
+
+    // Line Break
+    p1Div.appendChild(document.createElement('hr'));
+
+    // Add player icon
+    let p1Icon = document.createElement('h2');
+    p1Icon.textContent = `${game.player1.getToken()}`;
+    p1Div.appendChild(p1Icon);
+
+
+    // Player 2
+    let p2Div = document.createElement('div');
+    let p2Name = document.createElement('h2');
+    p2Name.textContent = `${game.player2.getName()}`;
+
+    if (game.player2.isBot()) {
+      // Append bot icon and style to fit on line
+      let botIcon = document.createElement('i')
+      let nameBox = document.createElement('div')
+      botIcon.setAttribute('class', 'fas fa-robot');
+      nameBox.appendChild(p2Name);
+      p2Name.insertAdjacentElement("afterend", botIcon);
+      p2Div.appendChild(nameBox);
+
+    } else {
+      // Just add name
+      p2Div.appendChild(p2Name);
+    }
+
+    // Line Break
+    p2Div.appendChild(document.createElement('hr'));
+
+    // Add player icon
+    let p2Icon = document.createElement('h2');
+    p2Icon.textContent = `${game.player2.getToken()}`;
+    p2Div.appendChild(p2Icon);
+
+    // =========================================================
+
+    // Turn indicator
+    let turnDiv = document.createElement('div');
+    turnDiv.setAttribute('id', 'turnDiv');
+    renderTurn(game, turnDiv);
+
+    // Player Div construction
+
+    // Add our player divs and turn div to our parent player display
+    pDiv.appendChild(p1Div);
+    pDiv.appendChild(turnDiv);
+    pDiv.appendChild(p2Div);
+
+    // Add out player display before our board
+    boardBox.insertAdjacentElement("beforebegin", pDiv)
+  }
+
+  const renderTurn = (game, turnDiv) => {
+    let turnText = document.createElement('p');
+    turnText.textContent = 'Your Turn';
+
+    console.log(`turn div:${turnDiv}`)
+    console.log(`turn text:${turnText}`)
+
+    turnDiv.appendChild(turnText);
+    let arrow = document.createElement('i');
+    if (game.currentPlayer == game.player1) {
+      arrow.setAttribute('class', 'fas fa-arrow-left');
+      turnText.insertAdjacentElement("beforebegin", arrow);
+    } else {
+      arrow.setAttribute('class', 'fas fa-arrow-right');
+      turnText.insertAdjacentElement("afterend", arrow);
+    }
+  }
+
+  // Expose public functions
   return {
     renderWelcome,
+    // TODO: DETETE renderBoard qwhen not testing
     renderBoard,
   };
 })();
@@ -319,15 +434,9 @@ const displayController = ((game) => {
  // multiples of something (players!), create them with factories.
 
 // Function that plays a round of tic-tac-toe, running setup and looping until done
-const playRound = () => {
+const playRound = (game) => {
 
 }
-
-
-
-
-
-
 
 
 // Game setup for testing
@@ -335,17 +444,17 @@ console.log(gameBoard.getBoard());
 console.log(gameBoard);
 gameBoard.getBoard();
 
-const myPlayer1 = playerFactory("Joe", "X");
+const myPlayer1 = playerFactory("Wilma", "X", true);
 console.log(myPlayer1.getName());
 console.log(myPlayer1.isBot());
 console.log(myPlayer1);
 
-const myPlayer2 = playerFactory("Jeb", "O");
+const myPlayer2 = playerFactory("Kevin", "O");
 console.log(myPlayer2.getName());
 console.log(myPlayer2.isBot());
 console.log(myPlayer2);
 
-const newGame = Game(myPlayer1, myPlayer2, gameBoard)
+// const newGame = Game(myPlayer1, myPlayer2, gameBoard)
 
 // newGame.board.playMove(myPlayer1, 0);
 // newGame.board.playMove(myPlayer1, 1);
@@ -356,4 +465,15 @@ console.log(gameBoard.getBoard());
 // displayController.renderBoard(newGame);
 
 // On load enter in with welcome.
-document.onload = displayController.renderWelcome()
+document.onload = displayController.renderWelcome();
+
+
+// To Do:
+//  1. Render turn indicator in player name div to show whos turn it is
+//  2. Figure out how to run a game loop, rendering a Play Again button at the end
+//     which will restart the loop at player select by re-rending that part (may need to expose
+//     NOTE: randomize first player maybe so we dont always start same
+//  3. Hook up board checking so as we play it will detect a win
+//  3a. With that also need to display proper response based on winner.
+//  4. Build AI logic
+//  4a. Hook login into game loop if player isBot is true, (even allow AI v AI)
