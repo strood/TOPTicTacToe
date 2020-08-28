@@ -1,0 +1,86 @@
+$cream: #FAFAC6;
+$grey: #474350;
+
+@mixin grid {
+
+    &:nth-child(1) {
+      border-bottom: 10px solid $grey;
+      border-right: 10px solid $grey;
+    }
+    &:nth-child(2) {
+      border-bottom: 10px solid $grey;
+      border-left: 10px solid $grey;
+      border-right: 10px solid $grey;
+    }
+    &:nth-child(3) {
+      border-bottom: 10px solid $grey;
+      border-left: 10px solid $grey;
+    }
+    &:nth-child(4) {
+      border-bottom: 10px solid $grey;
+      border-top: 10px solid $grey;
+      border-right: 10px solid $grey;
+    }
+    &:nth-child(5) {
+      border: 10px solid $grey;
+    }
+    &:nth-child(6) {
+      border-bottom: 10px solid $grey;
+      border-top: 10px solid $grey;
+      border-left: 10px solid $grey;
+    }
+    &:nth-child(7) {
+      border-top: 10px solid $grey;
+      border-right: 10px solid $grey;
+    }
+    &:nth-child(8) {
+      border-top: 10px solid $grey;
+      border-left: 10px solid $grey;
+      border-right: 10px solid $grey;
+    }
+    &:nth-child(9) {
+      border-top: 10px solid $grey;
+      border-left: 10px solid $grey;
+    }
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: $cream;
+}
+
+.boardBox {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: $cream;
+    width: 600px;
+    height: 600px;
+    margin-top: 8%;
+    padding-right: 1px;
+}
+
+.spot {
+  @include grid;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 30%;
+  height: 33.33333%;
+  border: 10px solid $cream;
+  font-family: 'Architects Daughter', cursive;
+  font-size: 250px;
+}
+
+
+//
+// @media only screen and (max-width: 600px) {
+//   .boardBox {
+//     width: 90%;
+//     // height: 90%;
+//   }
+// }
