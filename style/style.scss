@@ -1,6 +1,7 @@
 $cream: #FAFAC6;
 $grey: #474350;
 
+// Mixins
 @mixin grid {
 
     &:nth-child(1) {
@@ -43,7 +44,10 @@ $grey: #474350;
       border-left: 10px solid $grey;
     }
 }
+// ===============================================================================
 
+
+// Main page body
 body {
   display: flex;
   flex-direction: column;
@@ -52,7 +56,81 @@ body {
   height: 100%;
   background-color: $cream;
 }
+// ===============================================================================
 
+// Welcome screen title div and elements
+.titleDiv {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 8%;
+  h1 {
+    font-size: 80px;
+  }
+  h2 {
+    font-size: 30px;
+  }
+  p {
+    color: $grey;
+    position: absolute;
+    bottom: 10%;
+
+  }
+  p:hover {
+    color: grey;
+    cursor: pointer;
+  }
+}
+// ===============================================================================
+
+// Player selection screen to setup players for game
+.selectBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 9%;
+  h1 {
+    display: flex;
+    font-size: 70px;
+    margin-bottom: 7%;
+  }
+  button {
+    margin-top: 7%;
+    padding: 1%;
+    color: $grey;
+    font-size: 18px;
+  }
+  button:hover {
+    color: grey;
+    border-color: grey;
+  }
+}
+
+.playerBox {
+  display: flex;
+  padding: 2%;
+  label {
+    font-size: 20px;
+    color: $grey;
+  }
+  input[type="name"] {
+    background-color: white;
+    padding: 1%;
+    margin-left: 3px;
+    margin-right: 3px;
+    font-size: 15px;
+  }
+  input[type="checkbox"] {
+    margin-top: 5px;
+    margin-left: 4px;
+  }
+}
+
+// ===============================================================================
+
+
+// Game board and spot rendering
 .boardBox {
     display: flex;
     flex-wrap: wrap;
@@ -75,23 +153,4 @@ body {
   font-family: 'Architects Daughter', cursive;
   font-size: 250px;
 }
-
-.titleDiv {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  h1 {
-    font-size: 80px;
-  }
-  h2 {
-    font-size: 20px;
-  }
-}
-
-//
-// @media only screen and (max-width: 600px) {
-//   .boardBox {
-//     width: 90%;
-//     // height: 90%;
-//   }
-// }
+// ===============================================================================

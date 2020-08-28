@@ -6,6 +6,58 @@ body {
   height: 100%;
   background-color: #FAFAC6; }
 
+.titleDiv {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 8%; }
+  .titleDiv h1 {
+    font-size: 80px; }
+  .titleDiv h2 {
+    font-size: 30px; }
+  .titleDiv p {
+    color: #474350;
+    position: absolute;
+    bottom: 10%; }
+  .titleDiv p:hover {
+    color: grey;
+    cursor: pointer; }
+
+.selectBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 9%; }
+  .selectBox h1 {
+    display: flex;
+    font-size: 70px;
+    margin-bottom: 7%; }
+  .selectBox button {
+    margin-top: 7%;
+    padding: 1%;
+    color: #474350;
+    font-size: 18px; }
+  .selectBox button:hover {
+    color: grey;
+    border-color: grey; }
+
+.playerBox {
+  display: flex;
+  padding: 2%; }
+  .playerBox label {
+    font-size: 20px;
+    color: #474350; }
+  .playerBox input[type="name"] {
+    background-color: white;
+    padding: 1%;
+    margin-left: 3px;
+    margin-right: 3px;
+    font-size: 15px; }
+  .playerBox input[type="checkbox"] {
+    margin-top: 5px;
+    margin-left: 4px; }
+
 .boardBox {
   display: flex;
   flex-wrap: wrap;
@@ -55,14 +107,5 @@ body {
   .spot:nth-child(9) {
     border-top: 10px solid #474350;
     border-left: 10px solid #474350; }
-
-.titleDiv {
-  display: flex;
-  flex-direction: column;
-  align-items: center; }
-  .titleDiv h1 {
-    font-size: 80px; }
-  .titleDiv h2 {
-    font-size: 20px; }
 
 /*# sourceMappingURL=style.css.map */
