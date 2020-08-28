@@ -1,7 +1,6 @@
 //  Gameboard holds the board as an array, and functions to interact with board
 // Built as a module (Revealing module pattern) -- Scratch that
 const gameBoard = (() => {
-  'use strict';
   // Default board on setup, false status signifying incomplete game, winner defaulted
   const board = Array(9).fill("");
   const status = false;
@@ -27,7 +26,7 @@ const gameBoard = (() => {
   const _checkBoard = () => {
     if (!board.any("")) {
       console.log("Board is full")
-    } else if (_playerWin()) {
+    } else if (_playerWin) {
       console.log("Winner!")
     }
   }
@@ -55,10 +54,25 @@ const gameBoard = (() => {
   }
   const _verticalWin = () => {
     // return true if any vertical chunk all equal X or O, else false
+    if (board[0] == board[3] && board[0] == board[6]) {
+      return true;
+    } else if (board[1] == board[4] && board[1] == board[7]) {
+      return true;
+    } else if (board[2] == board[5] && board[2] == board[8]) {
+      return true;
+    } else {
+      return false
+    }
   }
   const _diagonalWin = () => {
     // return true if any horizontal chunk all equal X or O, else false
-
+    if (board[0] == board[4] && board[0] == board[8]) {
+      return true;
+    } else if (board[2] == board[4] && board[2] == board[6]) {
+      return true;
+    } else {
+      return false
+    }
   }
   // Exposing our public functions
   return {
@@ -89,7 +103,6 @@ const Game = (player1, player2, board) => {
   // Result will be false to start, change to winner/ tie based on outcome
   let result = false;
   let currentPlayer = player1;
-
   return { player1, player2, board, result, currentPlayer}
 }
 
@@ -99,6 +112,39 @@ const Game = (player1, player2, board) => {
 // (Maybe use to add all stages of game to page too)
 // ie, renderBoardBox, renderPlayerSelect
 const displayController = ((game) => {
+
+  const renderPlayerSelection = () => {
+    let body = document.querySelector('body');;
+    let boardBox = document.createElement('div');
+    boardBox.setAttribute('class', 'boardBox');
+    console.log(boardBox)
+    body.insertBefore(boardBox, body.children[0]);
+  }
+
+  const renderWelcome = () => {
+    // Build element
+    let title1 = document.createElement('h1');
+    title1.textContent = "Welcome";
+    let title2 = document.createElement('h2');
+    title2.textContent = "to"
+    let title3 = document.createElement('h1');
+    title3.textContent = "Tic-Tac-Toe"
+    let titleDiv = document.createElement('div');
+    titleDiv.setAttribute('class', 'titleDiv')
+    titleDiv.appendChild(title1);
+    titleDiv.appendChild(title2);
+    titleDiv.appendChild(title3);
+    let body = document.querySelector('body');
+    body.appendChild(titleDiv)
+    let html = document.querySelector('html');
+    // Add element with one time event listener on html
+    let setupFunct = () => {
+      body.removeChild(titleDiv)
+      html.removeEventListener('click', setupFunct)
+      renderPlayerSelection()
+    }
+    html.addEventListener('click', setupFunct);
+  }
 
   // render board in board display area
   const renderBoard = (game) => {
@@ -171,8 +217,7 @@ const displayController = ((game) => {
   }
 
   return {
-    renderBoard,
-    reRenderBoard,
+    renderWelcome,
   };
 })();
 
@@ -182,7 +227,10 @@ const displayController = ((game) => {
 //  use a module. If you need
  // multiples of something (players!), create them with factories.
 
+// Function that plays a round of tic-tac-toe, running setup and looping until done
+const playRound = () => {
 
+}
 
 // Game setup for testing
 console.log(gameBoard.getBoard());
@@ -207,5 +255,7 @@ const newGame = Game(myPlayer1, myPlayer2, gameBoard)
 // newGame.board.playMove(myPlayer2, 6);
 
 console.log(gameBoard.getBoard());
+// displayController.renderBoard(newGame)
 
-displayController.renderBoard(newGame)
+// On load enter in with welcome.
+document.onload = displayController.renderWelcome()
