@@ -1,5 +1,11 @@
 // ========== Javascript Tic-Tac-Toe ===============
 
+//  GOAL IS TO HAVE AS LITTLE GLOBAL CODE AS POSSIBLE
+// Try tucking everything away inside of a module or factory.
+// Rule of thumb: if you only ever need ONE of something (gameBoard, displayController),
+//  use a module. If you need
+ // multiples of something (players!), create them with factories.
+
 
 // ========== Players ============
 // Players will be stored in objects
@@ -32,8 +38,6 @@ const Game = (player1, player2, board) => {
 const gameBoard = (() => {
   // Default board on setup, false status signifying incomplete game, winner defaulted
   const board = Array(9).fill("");
-  const status = false;
-  const winner = "";
 
   // --- Functions to interact with board ---
   // Return board at current state
@@ -44,14 +48,23 @@ const gameBoard = (() => {
     // Check if move valid, if so play it
     if (board[position] == "") {
       board[position] = player.getToken()
+
       return true;
     } else {
       return false;
     }
   };
 
+  // Reset the board to its blank form
+  const _resetBoard = () => {
+    board.forEach((item, i) => {
+      board[i] = "";
+    });
+
+  }
+
   // Check to see if board full or won, return false if incomplete, true if won, "tie" if full
-  const checkBoard = () => {
+  const _checkBoard = () => {
     console.log(board.slice(0,3).all)
     if (!board.includes("")) {
       console.log("Board is full")
@@ -115,7 +128,7 @@ const gameBoard = (() => {
   return {
     getBoard:getBoard,
     playMove:playMove,
-    checkBoard: checkBoard,
+    resetBoard:_resetBoard,
   };
 })();
 
@@ -306,7 +319,7 @@ const displayController = ((game) => {
     let boardBox = document.querySelector(".boardBox");
     let turnDiv = document.getElementById('turnDiv');
     turnDiv.lastChild.remove();
-    turnDiv.firstChild.remove();
+    turnDiv.lastChild.remove();
     renderTurn(game, turnDiv);
     for (let child of boardBox.children) {
         if (child.textContent === game.board.getBoard()[child.getAttribute("data-num")]) {
@@ -412,7 +425,7 @@ const displayController = ((game) => {
     let arrow = document.createElement('i');
     if (game.currentPlayer == game.player1) {
       arrow.setAttribute('class', 'fas fa-arrow-left');
-      turnText.insertAdjacentElement("beforebegin", arrow);
+      turnText.insertAdjacentElement("afterend", arrow);
     } else {
       arrow.setAttribute('class', 'fas fa-arrow-right');
       turnText.insertAdjacentElement("afterend", arrow);
@@ -426,12 +439,6 @@ const displayController = ((game) => {
     renderBoard,
   };
 })();
-
-//  GOAL IS TO HAVE AS LITTLE GLOBAL CODE AS POSSIBLE
-// Try tucking everything away inside of a module or factory.
-// Rule of thumb: if you only ever need ONE of something (gameBoard, displayController),
-//  use a module. If you need
- // multiples of something (players!), create them with factories.
 
 // Function that plays a round of tic-tac-toe, running setup and looping until done
 const playRound = (game) => {
@@ -454,7 +461,7 @@ console.log(myPlayer2.getName());
 console.log(myPlayer2.isBot());
 console.log(myPlayer2);
 
-// const newGame = Game(myPlayer1, myPlayer2, gameBoard)
+const newGame = Game(myPlayer1, myPlayer2, gameBoard)
 
 // newGame.board.playMove(myPlayer1, 0);
 // newGame.board.playMove(myPlayer1, 1);
@@ -472,7 +479,7 @@ document.onload = displayController.renderWelcome();
 //  1. Render turn indicator in player name div to show whos turn it is
 //  2. Figure out how to run a game loop, rendering a Play Again button at the end
 //     which will restart the loop at player select by re-rending that part (may need to expose
-//     NOTE: randomize first player maybe so we dont always start same
+    // NOTE: add a Rematch option to play same playeers, or new players to go to player select
 //  3. Hook up board checking so as we play it will detect a win
 //  3a. With that also need to display proper response based on winner.
 //  4. Build AI logic
