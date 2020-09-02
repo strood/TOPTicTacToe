@@ -35,6 +35,77 @@ const Game = (player1, player2) => {
 
 }
 
+// Logic for bot player
+const aiLogic = (() => {
+
+  // Play move given board
+  const playMove = (game) => {
+    // Check to see best move given board
+    let move = _bestMove();
+    let player = game.currentPlayer;
+    console.log("Im going to play my best move!")
+    // Play move based on results of best move
+    console.log(move);
+    if (gameBoard.playMove(player, move)) {
+      // Once move made, swap player and re-render spot
+      console.log("I did it!")
+      let spot = document.querySelectorAll(`[data-num="${move}"]`);
+      spot.textContent = player.getToken
+      // Swap current player
+      if (player == game.player1) {
+        game.currentPlayer = game.player2;
+        displayController.reRenderBoard(game);
+      } else {
+        game.currentPlayer = game.player1;
+        displayController.reRenderBoard(game);
+      }
+    }
+  }
+
+  // Calculate best move given board
+  const _bestMove = () => {
+    let currentBoard = gameBoard.getBoard();
+
+    const isEmpty = (currentValue) => currentValue == "";
+
+    if (currentBoard.every(isEmpty)) {
+      // If board is empty, choose middle
+      return 4;
+    } else {
+      // Check for optimum move here and return number at which to play TODO
+      // Currently just gets the next open spot and plays there
+      let move = 0;
+      let winningIndex = false;
+      const _winningMove = (board, index) => {
+        return false;
+      }
+      const _savingMove = (board, index) => {
+        return false;
+      }
+
+      if (_winningMove(currentBoard, winningIndex)) {
+        // Index of winning move if one present
+      } else if (_savingMove(currentBoard, winningIndex)) {
+        // Move to block if present
+      } else {
+        // Else optimize to best move to get clse to 3
+
+      }
+
+    };
+
+
+      // DUMB RESPONSE BELOW, GET BETTER ANSWER ABOVE
+      return currentBoard.indexOf("");
+
+  }
+
+  // Expose public functions
+  return {
+    playMove: playMove,
+  }
+})();
+
 
 // ========== Board =====================
 //  Gameboard holds the board as an array, and functions to interact with board
@@ -313,10 +384,10 @@ const displayController = ((game) => {
               // Swap current player
               if (game.currentPlayer == game.player1) {
                 game.currentPlayer = game.player2;
-                _reRenderBoard(game);
+                reRenderBoard(game);
               } else {
                 game.currentPlayer = game.player1;
-                _reRenderBoard(game);
+                reRenderBoard(game);
               }
             } else {
               console.log("Invalid move");
@@ -326,9 +397,15 @@ const displayController = ((game) => {
           boardBox.appendChild(block);
       }
     }
+
+    // Make vcomputer make first move if up
+    if (game.currentPlayer.isBot()) {
+      aiLogic.playMove(game);
+    }
+
   };
 
-  const _reRenderBoard = (game) => {
+  const reRenderBoard = (game) => {
     // Grab board and turn divs to change
     let boardBox = document.querySelector(".boardBox");
     let turnDiv = document.getElementById('turnDiv');
@@ -355,6 +432,12 @@ const displayController = ((game) => {
       _renderResults(game, 'win');
     } else if (boardStatus == undefined) {
       _renderResults(game, 'tie');
+    }
+
+    // Check if current player is ai, if so make ai decide move and play it
+
+    if (game.currentPlayer.isBot()) {
+      aiLogic.playMove(game);
     }
   }
 
@@ -461,6 +544,7 @@ const displayController = ((game) => {
     }
   }
 
+  // Render results screen when game complete
   const _renderResults = (game, status) => {
     // Clear board and players from screen, grab body
     let body = document.querySelector('body');
@@ -522,6 +606,7 @@ const displayController = ((game) => {
   // Expose public functions
   return {
     renderWelcome,
+    reRenderBoard,
   };
 })();
 
