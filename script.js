@@ -10,7 +10,7 @@
 // ========== Players ============
 // Players will be stored in objects
 const playerFactory = (name, token, ai) => {
-  // Check if human, will setup differently if AI
+  // Default to human player, AI if checked at player select
   let bot = ai || false;
   const getName = () => name;
   const getToken = () => token;
@@ -28,8 +28,26 @@ const Game = (player1, player2, board) => {
   let result = false;
   // Randomly choose who goes first
   let currentPlayer = [player1, player2][Math.floor(Math.random() * 2)];
+
+
+
   return { player1, player2, board, result, currentPlayer}
+
 }
+
+const game = (() => {
+
+  let currentPlayer = [player1, player2][Math.floor(Math.random() * 2)];
+
+  // Setup and watch a new game instance
+  const newGame(player1, player2) {
+
+  }
+
+  return {
+    currentPlayer, currentPlayer
+  }
+})();
 
 
 // ========== Board =====================
@@ -48,37 +66,38 @@ const gameBoard = (() => {
     // Check if move valid, if so play it
     if (board[position] == "") {
       board[position] = player.getToken()
-
       return true;
     } else {
       return false;
     }
   };
 
+  // Check to see if board full or won, return false if incomplete, true if won, "tie" if full
+  const checkBoard = () => {
+    if (_playerWin(board)) {
+      console.log("Winner!")
+      return true;
+    } else if (!board.includes("")) {
+      console.log("Board is full")
+      return undefined;
+    } else {
+      console.log("play-On!")
+      return false;
+    }
+  }
+
   // Reset the board to its blank form
-  const _resetBoard = () => {
+  const resetBoard = () => {
     board.forEach((item, i) => {
       board[i] = "";
     });
 
   }
 
-  // Check to see if board full or won, return false if incomplete, true if won, "tie" if full
-  const _checkBoard = () => {
-    console.log(board.slice(0,3).all)
-    if (!board.includes("")) {
-      console.log("Board is full")
-    } else if (_playerWin(board)) {
-      console.log("Winner!")
-    } else {
-      console.log("play-On!")
-    }
-  }
 
   const _playerWin = (board) => {
     // If any wins, return true, else false
     if (_horizontalWin(board) || _verticalWin(board) || _diagonalWin(board)) {
-      console.log("Player won!")
       return true
     } else {
       return false
@@ -128,7 +147,8 @@ const gameBoard = (() => {
   return {
     getBoard:getBoard,
     playMove:playMove,
-    resetBoard:_resetBoard,
+    checkBoard:checkBoard,
+    resetBoard:resetBoard,
   };
 })();
 
@@ -183,6 +203,7 @@ const displayController = ((game) => {
     let nameButton = document.createElement('button')
     nameButton.textContent = "- Play Game -"
 
+    //
     let startGameFunct = () => {
 
       // Create players from info on page, then remove playerSelect
@@ -190,7 +211,8 @@ const displayController = ((game) => {
       let player2 = playerFactory(p2NameInput.value, "O", (p2AiInput.checked) ? true : false);
 
       // Setup new game
-      let game = Game(player1, player2, gameBoard);
+      game.newGame(player1, player2);
+      // let game = Game(player1, player2, gameBoard);
 
       // Clear page
       body.removeChild(selectBox);
@@ -199,7 +221,9 @@ const displayController = ((game) => {
       renderBoard(game);
 
     }
-    nameButton.addEventListener('click', startGameFunct)
+
+
+    nameButton.addEventListener('click', startGameFunct())
 
 
     p1Box.appendChild(p1NameInput);
@@ -218,7 +242,6 @@ const displayController = ((game) => {
     selectBox.appendChild(p2Box);
     selectBox.appendChild(nameButton);
 
-    console.log(selectBox);
     body.insertBefore(selectBox, body.children[0]);
   }
 
@@ -244,14 +267,14 @@ const displayController = ((game) => {
     titleDiv.appendChild(clickText);
 
     let body = document.querySelector('body');
-    body.appendChild(titleDiv)
+    body.appendChild(titleDiv);
 
     // Add element with one time event listener on html
     let html = document.querySelector('html');
     let setupFunct = () => {
-      body.removeChild(titleDiv)
-      html.removeEventListener('click', setupFunct)
-      renderPlayerSelection()
+      body.removeChild(titleDiv);
+      html.removeEventListener('click', setupFunct);
+      renderPlayerSelection();
     }
     html.addEventListener('click', setupFunct);
 
@@ -260,7 +283,6 @@ const displayController = ((game) => {
   // render board in board display area
   const renderBoard = (game) => {
     // Grab board box
-
     let boardBox = document.createElement("div");
     boardBox.setAttribute('class', 'boardBox');
     let body = document.querySelector('body');
@@ -279,13 +301,13 @@ const displayController = ((game) => {
           block.setAttribute("class", "spot");
           block.setAttribute("data-num", `${i}`);
           block.textContent = "X";
-          boardBox.appendChild(block)
+          boardBox.appendChild(block);
       } else if (position == "O") {
           let block = document.createElement('div');
           block.setAttribute("class", "spot");
           block.setAttribute("data-num", `${i}`);
           block.textContent = "O";
-          boardBox.appendChild(block)
+          boardBox.appendChild(block);
       } else {
           // Setup blank spot
           let block = document.createElement('div');
@@ -293,24 +315,24 @@ const displayController = ((game) => {
           // Add listener to blank spots to await clicks on turn
           block.addEventListener('click', (e) => {
             let dataNum = e.srcElement.getAttribute("data-num")
-            console.log(dataNum)
             if (game.board.playMove(game.currentPlayer, dataNum)) {
               // If move works, swap player and re-render spot
-              let spot = document.querySelectorAll(`[data-num="${dataNum}"]`)
+              let spot = document.querySelectorAll(`[data-num="${dataNum}"]`);
               spot.textContent = game.currentPlayer.getToken
+              // Swap current player
               if (game.currentPlayer == game.player1) {
                 game.currentPlayer = game.player2;
-                reRenderBoard(game)
+                reRenderBoard(game);
               } else {
                 game.currentPlayer = game.player1;
-                reRenderBoard(game)
+                reRenderBoard(game);
               }
             } else {
-              console.log("Invalid move")
+              console.log("Invalid move");
             }
           })
           block.setAttribute("data-num", `${i}`);
-          boardBox.appendChild(block)
+          boardBox.appendChild(block);
       }
     }
   };
@@ -418,32 +440,32 @@ const displayController = ((game) => {
     let turnText = document.createElement('p');
     turnText.textContent = 'Your Turn';
 
-    console.log(`turn div:${turnDiv}`)
-    console.log(`turn text:${turnText}`)
-
     turnDiv.appendChild(turnText);
-    let arrow = document.createElement('i');
+    // let arrow = document.createElement('i'); UNCOMMENT THIS WHEN ON INETERNET
+    let arrow = document.createElement('p');
     if (game.currentPlayer == game.player1) {
       arrow.setAttribute('class', 'fas fa-arrow-left');
+      arrow.textContent = '<'; // Comment this out when connetect
       turnText.insertAdjacentElement("afterend", arrow);
     } else {
       arrow.setAttribute('class', 'fas fa-arrow-right');
+      arrow.textContent = '>'; // Comment this out when connetect
       turnText.insertAdjacentElement("afterend", arrow);
     }
   }
+
+  const renderWin = ()
+  const renderTie = ()
 
   // Expose public functions
   return {
     renderWelcome,
     // TODO: DETETE renderBoard qwhen not testing
     renderBoard,
+    renderResults,
+    renderPlayerSelection,
   };
 })();
-
-// Function that plays a round of tic-tac-toe, running setup and looping until done
-const playRound = (game) => {
-
-}
 
 
 // Game setup for testing
@@ -469,10 +491,10 @@ const newGame = Game(myPlayer1, myPlayer2, gameBoard)
 // newGame.board.playMove(myPlayer2, 6);
 
 console.log(gameBoard.getBoard());
-// displayController.renderBoard(newGame);
+displayController.renderBoard(newGame);
 
 // On load enter in with welcome.
-document.onload = displayController.renderWelcome();
+// document.onload = displayController.renderWelcome();
 
 
 // To Do:
