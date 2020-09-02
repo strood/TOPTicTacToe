@@ -80,7 +80,7 @@ const gameBoard = (() => {
 
   }
 
-
+  // Check if a player has won the board
   const _playerWin = (board) => {
     // If any wins, return true, else false
     if (_horizontalWin(board) || _verticalWin(board) || _diagonalWin(board)) {
