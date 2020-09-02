@@ -180,3 +180,27 @@ body {
   font-size: 250px;
 }
 // ===============================================================================
+
+// Results div and buttons style
+
+.resultDiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 9%;
+  h1 {
+    font-size: 70px;
+    margin-bottom: 3%;
+  }
+
+  button {
+    margin-top: 1%;
+    padding: 3%;
+    font-size: 20px;
+    color: $grey;
+  }
+  button:hover {
+    color: grey;
+  }
+}

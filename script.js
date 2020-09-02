@@ -7,6 +7,8 @@
  // multiples of something (players!), create them with factories.
 
 
+// --------------Models------------------------
+
 // ========== Players ============
 // Players will be stored in objects
 const playerFactory = (name, token, ai) => {
@@ -22,32 +24,16 @@ const playerFactory = (name, token, ai) => {
 
 // =========== Game ==============
 // Object to hold game details
-const Game = (player1, player2, board) => {
+const Game = (player1, player2) => {
   // Returns  a new game object to be played with given chars and new board
-  // Result will be false to start, change to winner/ tie based on outcome
-  let result = false;
+  // will setup and hold current player
+
   // Randomly choose who goes first
   let currentPlayer = [player1, player2][Math.floor(Math.random() * 2)];
 
-
-
-  return { player1, player2, board, result, currentPlayer}
+  return { player1, player2, currentPlayer}
 
 }
-
-const game = (() => {
-
-  let currentPlayer = [player1, player2][Math.floor(Math.random() * 2)];
-
-  // Setup and watch a new game instance
-  const newGame(player1, player2) {
-
-  }
-
-  return {
-    currentPlayer, currentPlayer
-  }
-})();
 
 
 // ========== Board =====================
@@ -75,13 +61,13 @@ const gameBoard = (() => {
   // Check to see if board full or won, return false if incomplete, true if won, "tie" if full
   const checkBoard = () => {
     if (_playerWin(board)) {
-      console.log("Winner!")
+      // Board has been won
       return true;
     } else if (!board.includes("")) {
-      console.log("Board is full")
+      // Board is full
       return undefined;
     } else {
-      console.log("play-On!")
+      // No winner or draw, continue play
       return false;
     }
   }
@@ -156,95 +142,10 @@ const gameBoard = (() => {
 // ------- Display Controller -----------
 
 // Function to render contents of gameboard array to page
-// (Maybe use to add all stages of game to page too)
-// ie, renderBoardBox, renderPlayerSelect
 const displayController = ((game) => {
+  // Listed in order of appearance.
 
-  const renderPlayerSelection = () => {
-
-    let body = document.querySelector('body');
-
-    let selectBox = document.createElement('div');
-    selectBox.setAttribute('class', 'selectBox');
-    let selectTitle = document.createElement('h1');
-    selectTitle.textContent = "Player Names"
-
-    let p1Box = document.createElement('div');
-    p1Box.setAttribute('class', 'playerBox');
-
-    let p2Box = document.createElement('div');
-    p2Box.setAttribute('class', 'playerBox');
-
-    const p1NameInput = document.createElement('input');
-    p1NameInput.setAttribute('class','nameInput');
-    p1NameInput.setAttribute('data-player','1');
-    p1NameInput.type = "name";
-    p1NameInput.maxLength = 15;
-    let p1AiInput = document.createElement('input');
-    p1AiInput.type = "checkbox";
-    let p1NameLabel = document.createElement('label');
-    p1NameLabel.textContent = "Player 1:"
-    let p1AiLabel = document.createElement('label');
-    p1AiLabel.textContent = "- AI?"
-
-    const p2NameInput = document.createElement('input');
-    p2NameInput.setAttribute('class','nameInput');
-    p2NameInput.setAttribute('data-player','2');
-    p2NameInput.type = "name";
-    p2NameInput.maxLength = 15;
-    let p2AiInput = document.createElement('input');
-    p2AiInput.type = "checkbox";
-    let p2NameLabel = document.createElement('label');
-    p2NameLabel.textContent = "Player 2:"
-    let p2AiLabel = document.createElement('label');
-    p2AiLabel.textContent = "- AI?"
-
-    // Make Button
-    let nameButton = document.createElement('button')
-    nameButton.textContent = "- Play Game -"
-
-    //
-    let startGameFunct = () => {
-
-      // Create players from info on page, then remove playerSelect
-      let player1 = playerFactory(p1NameInput.value, "X", (p1AiInput.checked) ? true : false);
-      let player2 = playerFactory(p2NameInput.value, "O", (p2AiInput.checked) ? true : false);
-
-      // Setup new game
-      game.newGame(player1, player2);
-      // let game = Game(player1, player2, gameBoard);
-
-      // Clear page
-      body.removeChild(selectBox);
-
-      // Pass new game to board render
-      renderBoard(game);
-
-    }
-
-
-    nameButton.addEventListener('click', startGameFunct())
-
-
-    p1Box.appendChild(p1NameInput);
-    p1Box.insertBefore(p1NameLabel, p1NameInput);
-    p1NameInput.insertAdjacentElement("afterend", p1AiInput);
-    p1AiInput.insertAdjacentElement("beforebegin", p1AiLabel);
-
-
-    p2Box.appendChild(p2NameInput);
-    p2Box.insertBefore(p2NameLabel, p2NameInput);
-    p2NameInput.insertAdjacentElement("afterend", p2AiInput);
-    p2AiInput.insertAdjacentElement("beforebegin", p2AiLabel);
-
-    selectBox.appendChild(selectTitle);
-    selectBox.appendChild(p1Box);
-    selectBox.appendChild(p2Box);
-    selectBox.appendChild(nameButton);
-
-    body.insertBefore(selectBox, body.children[0]);
-  }
-
+  // Render initial welcome screen
   const renderWelcome = () => {
     // Build element
     let title1 = document.createElement('h1');
@@ -274,26 +175,116 @@ const displayController = ((game) => {
     let setupFunct = () => {
       body.removeChild(titleDiv);
       html.removeEventListener('click', setupFunct);
-      renderPlayerSelection();
+      _renderPlayerSelection();
     }
     html.addEventListener('click', setupFunct);
 
   }
 
+  const _renderPlayerSelection = () => {
+    // Grab doc body
+    let body = document.querySelector('body');
+
+    // Container for player selection
+    let selectBox = document.createElement('div');
+    selectBox.setAttribute('class', 'selectBox');
+    let selectTitle = document.createElement('h1');
+    selectTitle.textContent = "Player Names"
+
+    // Container for player 1
+    let p1Box = document.createElement('div');
+    p1Box.setAttribute('class', 'playerBox');
+
+    // Container for player 2
+    let p2Box = document.createElement('div');
+    p2Box.setAttribute('class', 'playerBox');
+
+    // P1 container elements
+    const p1NameInput = document.createElement('input');
+    p1NameInput.setAttribute('class','nameInput');
+    p1NameInput.setAttribute('data-player','1');
+    p1NameInput.type = "name";
+    p1NameInput.maxLength = 15;
+    let p1AiInput = document.createElement('input');
+    p1AiInput.type = "checkbox";
+    let p1NameLabel = document.createElement('label');
+    p1NameLabel.textContent = "Player 1:"
+    let p1AiLabel = document.createElement('label');
+    p1AiLabel.textContent = "- AI?"
+
+    // P2 container elements
+    const p2NameInput = document.createElement('input');
+    p2NameInput.setAttribute('class','nameInput');
+    p2NameInput.setAttribute('data-player','2');
+    p2NameInput.type = "name";
+    p2NameInput.maxLength = 15;
+    let p2AiInput = document.createElement('input');
+    p2AiInput.type = "checkbox";
+    let p2NameLabel = document.createElement('label');
+    p2NameLabel.textContent = "Player 2:"
+    let p2AiLabel = document.createElement('label');
+    p2AiLabel.textContent = "- AI?"
+
+    // Make Button
+    let nameButton = document.createElement('button')
+    nameButton.textContent = "- Play Game -"
+
+    // Function to setup and start a new game from our start game button
+    let startGameFunct = () => {
+      // Create players from info on page, then remove playerSelect
+      let player1 = playerFactory(p1NameInput.value, "X", (p1AiInput.checked) ? true : false);
+      let player2 = playerFactory(p2NameInput.value, "O", (p2AiInput.checked) ? true : false);
+
+      // Clear page
+      body.removeChild(selectBox);
+
+      // Pass new game to board render
+      let game = Game(player1, player2)
+      _renderBoard(game);
+    }
+    // Add the above function to our start game button
+    nameButton.addEventListener('click', startGameFunct)
+
+    // Add P1 elements to container
+    p1Box.appendChild(p1NameInput);
+    p1Box.insertBefore(p1NameLabel, p1NameInput);
+    p1NameInput.insertAdjacentElement("afterend", p1AiInput);
+    p1AiInput.insertAdjacentElement("beforebegin", p1AiLabel);
+
+    // Add P2 elements to container
+    p2Box.appendChild(p2NameInput);
+    p2Box.insertBefore(p2NameLabel, p2NameInput);
+    p2NameInput.insertAdjacentElement("afterend", p2AiInput);
+    p2AiInput.insertAdjacentElement("beforebegin", p2AiLabel);
+
+    // Add the containers and title to base container
+    selectBox.appendChild(selectTitle);
+    selectBox.appendChild(p1Box);
+    selectBox.appendChild(p2Box);
+    selectBox.appendChild(nameButton);
+
+    // Add our player select to the body
+    body.insertBefore(selectBox, body.children[0]);
+  }
+
+
   // render board in board display area
-  const renderBoard = (game) => {
-    // Grab board box
+  const _renderBoard = (game) => {
+    // Build boardBox and add to body
     let boardBox = document.createElement("div");
     boardBox.setAttribute('class', 'boardBox');
     let body = document.querySelector('body');
     body.insertAdjacentElement("afterbegin", boardBox);
-    renderPlayers(game);
+
+    // Render the players div above board.
+    _renderPlayers(game);
+
     // Loop through our boards array and set up spots accordingly
     // Go backwards so we can push appends out to end
     // Set count for data-keys
     let i = -1;
 
-    for (let position of game.board.getBoard()) {
+    for (let position of gameBoard.getBoard()) {
       // Increment count to set as data key for each spot
       i ++
       if (position == "X") {
@@ -315,17 +306,17 @@ const displayController = ((game) => {
           // Add listener to blank spots to await clicks on turn
           block.addEventListener('click', (e) => {
             let dataNum = e.srcElement.getAttribute("data-num")
-            if (game.board.playMove(game.currentPlayer, dataNum)) {
+            if (gameBoard.playMove(game.currentPlayer, dataNum)) {
               // If move works, swap player and re-render spot
               let spot = document.querySelectorAll(`[data-num="${dataNum}"]`);
               spot.textContent = game.currentPlayer.getToken
               // Swap current player
               if (game.currentPlayer == game.player1) {
                 game.currentPlayer = game.player2;
-                reRenderBoard(game);
+                _reRenderBoard(game);
               } else {
                 game.currentPlayer = game.player1;
-                reRenderBoard(game);
+                _reRenderBoard(game);
               }
             } else {
               console.log("Invalid move");
@@ -337,25 +328,39 @@ const displayController = ((game) => {
     }
   };
 
-  const reRenderBoard = (game) => {
+  const _reRenderBoard = (game) => {
+    // Grab board and turn divs to change
     let boardBox = document.querySelector(".boardBox");
     let turnDiv = document.getElementById('turnDiv');
+
+    // Clean turndiv
     turnDiv.lastChild.remove();
     turnDiv.lastChild.remove();
-    renderTurn(game, turnDiv);
+
+    // change info in turn div to point to correct player
+    _renderTurn(game, turnDiv);
     for (let child of boardBox.children) {
-        if (child.textContent === game.board.getBoard()[child.getAttribute("data-num")]) {
-          // Leave it as is if exact same - could do an error or something here
+        if (child.textContent === gameBoard.getBoard()[child.getAttribute("data-num")]) {
+          // Leave it as is if exact same
         } else {
-          // Update text if its been changed
-          child.textContent = game.board.getBoard()[child.getAttribute("data-num")]
+          // Update text if its been changed by the recent move
+          child.textContent = gameBoard.getBoard()[child.getAttribute("data-num")]
         }
+    }
+
+    // Check if game has been won, if so _renderResults
+    let boardStatus = gameBoard.checkBoard();
+    // Check board to see if its been won, or filled, render if so
+    if (boardStatus == true) {
+      _renderResults(game, 'win');
+    } else if (boardStatus == undefined) {
+      _renderResults(game, 'tie');
     }
   }
 
   // Render the player info sections during game
-  const renderPlayers = (game) => {
-
+  const _renderPlayers = (game) => {
+    // Grab board and body
     let boardBox = document.querySelector('.boardBox');
     let body = document.querySelector('body');
 
@@ -423,7 +428,7 @@ const displayController = ((game) => {
     // Turn indicator
     let turnDiv = document.createElement('div');
     turnDiv.setAttribute('id', 'turnDiv');
-    renderTurn(game, turnDiv);
+    _renderTurn(game, turnDiv);
 
     // Player Div construction
 
@@ -436,13 +441,15 @@ const displayController = ((game) => {
     boardBox.insertAdjacentElement("beforebegin", pDiv)
   }
 
-  const renderTurn = (game, turnDiv) => {
+  const _renderTurn = (game, turnDiv) => {
+    // Setup new elements
     let turnText = document.createElement('p');
     turnText.textContent = 'Your Turn';
-
+    // append new elements
     turnDiv.appendChild(turnText);
     // let arrow = document.createElement('i'); UNCOMMENT THIS WHEN ON INETERNET
-    let arrow = document.createElement('p');
+    let arrow = document.createElement('p'); // comment this out when on internet
+
     if (game.currentPlayer == game.player1) {
       arrow.setAttribute('class', 'fas fa-arrow-left');
       arrow.textContent = '<'; // Comment this out when connetect
@@ -454,55 +461,74 @@ const displayController = ((game) => {
     }
   }
 
-  const renderWin = ()
-  const renderTie = ()
+  const _renderResults = (game, status) => {
+    // Clear board and players from screen, grab body
+    let body = document.querySelector('body');
+    let pDiv = document.querySelector('.pDiv');
+    let boardBox = document.querySelector('.boardBox');
+
+    pDiv.remove();
+    boardBox.remove();
+
+    // Setup results screen
+    let resultDiv = document.createElement('div');
+    resultDiv.setAttribute('class', 'resultDiv');
+    let resultTitle = document.createElement('h1');
+
+    // Setup title text based on outcome.
+    if (status == 'win') {
+      // Current player is winner, render a winner screen with our options to restart
+      console.log('Render a winner')
+      if (game.currentPlayer == game.player1) {
+        resultTitle.textContent = `${game.player2.getName()} wins!`;
+      } else {
+        resultTitle.textContent = `${game.player1.getName()} wins!`;
+      }
+    } else {
+      // Tie game, render a draw screen with our options to restart
+      console.log('Render a draw')
+      resultTitle.textContent = "Draw!";
+    }
+
+    // add title, and buttons to provide options
+    resultDiv.appendChild(resultTitle);
+
+    // Make Buttons w/ options on click
+    // Play again button
+    let playButton = document.createElement('button');
+    playButton.textContent = '- Play Again -';
+    playButton.addEventListener('click', (e) => {
+      gameBoard.resetBoard();
+      resultDiv.remove();
+      _renderBoard(game);
+    })
+    // Select new players button
+    let playerButton = document.createElement('button');
+    playerButton.textContent = '- New Players -';
+    playerButton.addEventListener('click', (e) => {
+      gameBoard.resetBoard();
+      resultDiv.remove();
+      _renderPlayerSelection();
+    })
+
+    // Append buttons to div
+    resultDiv.appendChild(playButton);
+    resultDiv.appendChild(playerButton);
+
+    // Append div to body
+    body.appendChild(resultDiv);
+  }
 
   // Expose public functions
   return {
     renderWelcome,
-    // TODO: DETETE renderBoard qwhen not testing
-    renderBoard,
-    renderResults,
-    renderPlayerSelection,
   };
 })();
 
-
-// Game setup for testing
-console.log(gameBoard.getBoard());
-console.log(gameBoard);
-gameBoard.getBoard();
-
-const myPlayer1 = playerFactory("Wilma", "X", true);
-console.log(myPlayer1.getName());
-console.log(myPlayer1.isBot());
-console.log(myPlayer1);
-
-const myPlayer2 = playerFactory("Kevin", "O");
-console.log(myPlayer2.getName());
-console.log(myPlayer2.isBot());
-console.log(myPlayer2);
-
-const newGame = Game(myPlayer1, myPlayer2, gameBoard)
-
-// newGame.board.playMove(myPlayer1, 0);
-// newGame.board.playMove(myPlayer1, 1);
-// newGame.board.playMove(myPlayer2, 4);
-// newGame.board.playMove(myPlayer2, 6);
-
-console.log(gameBoard.getBoard());
-displayController.renderBoard(newGame);
-
-// On load enter in with welcome.
-// document.onload = displayController.renderWelcome();
+// Render welcome screen on load
+document.onload = displayController.renderWelcome();
 
 
 // To Do:
-//  1. Render turn indicator in player name div to show whos turn it is
-//  2. Figure out how to run a game loop, rendering a Play Again button at the end
-//     which will restart the loop at player select by re-rending that part (may need to expose
-    // NOTE: add a Rematch option to play same playeers, or new players to go to player select
-//  3. Hook up board checking so as we play it will detect a win
-//  3a. With that also need to display proper response based on winner.
 //  4. Build AI logic
 //  4a. Hook login into game loop if player isBot is true, (even allow AI v AI)
