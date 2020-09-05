@@ -447,16 +447,13 @@ const displayController = ((game) => {
     turnText.textContent = 'Your Turn';
     // append new elements
     turnDiv.appendChild(turnText);
-    // let arrow = document.createElement('i'); UNCOMMENT THIS WHEN ON INETERNET
-    let arrow = document.createElement('p'); // comment this out when on internet
+    let arrow = document.createElement('i');
 
     if (game.currentPlayer == game.player1) {
       arrow.setAttribute('class', 'fas fa-arrow-left');
-      arrow.textContent = '<'; // Comment this out when connetect
       turnText.insertAdjacentElement("afterend", arrow);
     } else {
       arrow.setAttribute('class', 'fas fa-arrow-right');
-      arrow.textContent = '>'; // Comment this out when connetect
       turnText.insertAdjacentElement("afterend", arrow);
     }
   }
