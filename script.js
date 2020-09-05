@@ -237,9 +237,10 @@ const displayController = ((game) => {
     // Function to setup and start a new game from our start game button
     let startGameFunct = () => {
       // Create players from info on page, then remove playerSelect
-      let player1 = playerFactory(p1NameInput.value, "X", (p1AiInput.checked) ? true : false);
-      let player2 = playerFactory(p2NameInput.value, "O", (p2AiInput.checked) ? true : false);
-
+      // let player1 = playerFactory(p1NameInput.value, "X", (p1AiInput.checked) ? true : false);
+      // let player2 = playerFactory(p2NameInput.value, "O", (p2AiInput.checked) ? true : false);
+      let player1 = playerFactory(p1NameInput.value, "X", false);
+      let player2 = playerFactory(p2NameInput.value, "O", false);
       // Clear page
       body.removeChild(selectBox);
 
@@ -253,14 +254,14 @@ const displayController = ((game) => {
     // Add P1 elements to container
     p1Box.appendChild(p1NameInput);
     p1Box.insertBefore(p1NameLabel, p1NameInput);
-    p1NameInput.insertAdjacentElement("afterend", p1AiInput);
-    p1AiInput.insertAdjacentElement("beforebegin", p1AiLabel);
+    // p1NameInput.insertAdjacentElement("afterend", p1AiInput);
+    // p1AiInput.insertAdjacentElement("beforebegin", p1AiLabel);
 
     // Add P2 elements to container
     p2Box.appendChild(p2NameInput);
     p2Box.insertBefore(p2NameLabel, p2NameInput);
-    p2NameInput.insertAdjacentElement("afterend", p2AiInput);
-    p2AiInput.insertAdjacentElement("beforebegin", p2AiLabel);
+    // p2NameInput.insertAdjacentElement("afterend", p2AiInput);
+    // p2AiInput.insertAdjacentElement("beforebegin", p2AiLabel);
 
     // Add the containers and title to base container
     selectBox.appendChild(selectTitle);
