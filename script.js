@@ -3,9 +3,7 @@
 //  GOAL IS TO HAVE AS LITTLE GLOBAL CODE AS POSSIBLE
 // Try tucking everything away inside of a module or factory.
 // Rule of thumb: if you only ever need ONE of something (gameBoard, displayController),
-//  use a module. If you need
- // multiples of something (players!), create them with factories.
-
+//  use a module. If you need multiples of something (players!), create them with factories.
 
 // --------------Models------------------------
 
@@ -25,7 +23,7 @@ const playerFactory = (name, token, ai) => {
 // =========== Game ==============
 // Object to hold game details
 const Game = (player1, player2) => {
-  // Returns  a new game object to be played with given chars and new board
+  // Returns a new game object to be played with given chars and new board
   // will setup and hold current player
 
   // Randomly choose who goes first
@@ -105,8 +103,6 @@ const aiLogic = (() => {
     playMove: playMove,
   }
 })();
-
-
 // ========== Board =====================
 //  Gameboard holds the board as an array, and functions to interact with board
 // Built as a module (Revealing module pattern)
@@ -608,6 +604,81 @@ const displayController = ((game) => {
     renderWelcome,
     reRenderBoard,
   };
+})();
+
+// Logic for bot player
+const aiLogic = (() => {
+
+  // Play move given board
+  const playMove = (game) => {
+    // Check to see best move given board
+    let move = _bestMove();
+    let player = game.currentPlayer;
+    console.log("Im going to play my best move!")
+    // Play move based on results of best move
+    console.log(move);
+    if (gameBoard.playMove(player, move)) {
+      // Once move made, swap player and re-render spot
+      console.log("I did it!")
+      let spot = document.querySelectorAll(`[data-num="${move}"]`);
+      spot.textContent = player.getToken
+      // Swap current player
+      if (player == game.player1) {
+        game.currentPlayer = game.player2;
+        displayController.reRenderBoard(game);
+      } else {
+        game.currentPlayer = game.player1;
+        displayController.reRenderBoard(game);
+      }
+    }
+  }
+
+  // Calculate best move given board
+  const _bestMove = () => {
+    let currentBoard = gameBoard.getBoard();
+
+    const isEmpty = (currentValue) => currentValue == "";
+
+
+
+
+
+    // if (currentBoard.every(isEmpty)) {
+    //   // If board is empty, choose middle
+    //   return 4;
+    // } else {
+    //   // Check for optimum move here and return number at which to play TODO
+    //   // Currently just gets the next open spot and plays there
+    //   let move = 0;
+    //   let winningIndex = false;
+    //   const _winningMove = (board, index) => {
+    //     return false;
+    //   }
+    //   const _savingMove = (board, index) => {
+    //     return false;
+    //   }
+    //
+    //   if (_winningMove(currentBoard, winningIndex)) {
+    //     // Index of winning move if one present
+    //   } else if (_savingMove(currentBoard, winningIndex)) {
+    //     // Move to block if present
+    //   } else {
+    //     // Else optimize to best move to get clse to 3
+    //
+    //   }
+    //
+    // };
+    // DUMB RESPONSE BELOW, GET BETTER ANSWER ABOVE
+    return currentBoard.indexOf("");
+
+
+
+  }
+
+  // Expose public functions
+  return {
+    playMove: playMove,
+  }
 })();
 
 // Render welcome screen on load
