@@ -6,4 +6,4 @@ Game made in with Javascript for The Odin Project
 ## Learning Objectives
 - Utilize modules and factories to minimize global code
 - Implement a functional game board and functional, clean user interaction
-- Add an AI option to play against the user (Make unbeatable) *TODO*
+- Add an AI option to play against the user. Using minimax algo to make unbeatable.
