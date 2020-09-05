@@ -16,7 +16,11 @@ const playerFactory = (name, token, ai) => {
   const getToken = () => token;
   const isBot = () => bot;
 
-  return {getName, getToken, isBot}
+  return {
+    getName,
+    getToken,
+    isBot
+  }
 }
 
 
@@ -29,80 +33,14 @@ const Game = (player1, player2) => {
   // Randomly choose who goes first
   let currentPlayer = [player1, player2][Math.floor(Math.random() * 2)];
 
-  return { player1, player2, currentPlayer}
+  return {
+    player1,
+    player2,
+    currentPlayer
+  }
 
 }
 
-// Logic for bot player
-const aiLogic = (() => {
-
-  // Play move given board
-  const playMove = (game) => {
-    // Check to see best move given board
-    let move = _bestMove();
-    let player = game.currentPlayer;
-    console.log("Im going to play my best move!")
-    // Play move based on results of best move
-    console.log(move);
-    if (gameBoard.playMove(player, move)) {
-      // Once move made, swap player and re-render spot
-      console.log("I did it!")
-      let spot = document.querySelectorAll(`[data-num="${move}"]`);
-      spot.textContent = player.getToken
-      // Swap current player
-      if (player == game.player1) {
-        game.currentPlayer = game.player2;
-        displayController.reRenderBoard(game);
-      } else {
-        game.currentPlayer = game.player1;
-        displayController.reRenderBoard(game);
-      }
-    }
-  }
-
-  // Calculate best move given board
-  const _bestMove = () => {
-    let currentBoard = gameBoard.getBoard();
-
-    const isEmpty = (currentValue) => currentValue == "";
-
-    if (currentBoard.every(isEmpty)) {
-      // If board is empty, choose middle
-      return 4;
-    } else {
-      // Check for optimum move here and return number at which to play TODO
-      // Currently just gets the next open spot and plays there
-      let move = 0;
-      let winningIndex = false;
-      const _winningMove = (board, index) => {
-        return false;
-      }
-      const _savingMove = (board, index) => {
-        return false;
-      }
-
-      if (_winningMove(currentBoard, winningIndex)) {
-        // Index of winning move if one present
-      } else if (_savingMove(currentBoard, winningIndex)) {
-        // Move to block if present
-      } else {
-        // Else optimize to best move to get clse to 3
-
-      }
-
-    };
-
-
-      // DUMB RESPONSE BELOW, GET BETTER ANSWER ABOVE
-      return currentBoard.indexOf("");
-
-  }
-
-  // Expose public functions
-  return {
-    playMove: playMove,
-  }
-})();
 // ========== Board =====================
 //  Gameboard holds the board as an array, and functions to interact with board
 // Built as a module (Revealing module pattern)
@@ -159,9 +97,9 @@ const gameBoard = (() => {
 
   const _horizontalWin = (board) => {
     // Return true if any horizontal slize all equal to x or o, else false
-    if (board.slice(0,3).every((spot) => spot === "X") || board.slice(0,3).every((spot) => spot === "O")) {
+    if (board.slice(0, 3).every((spot) => spot === "X") || board.slice(0, 3).every((spot) => spot === "O")) {
       return true;
-    } else if (board.slice(3,6).every((spot) => spot === "X") || board.slice(3,6).every((spot) => spot === "O")) {
+    } else if (board.slice(3, 6).every((spot) => spot === "X") || board.slice(3, 6).every((spot) => spot === "O")) {
       return true;
     } else if (board.slice(6).every((spot) => spot === "X") || board.slice(6).every((spot) => spot === "O")) {
       return true;
@@ -198,10 +136,10 @@ const gameBoard = (() => {
   }
   // Exposing our public functions
   return {
-    getBoard:getBoard,
-    playMove:playMove,
-    checkBoard:checkBoard,
-    resetBoard:resetBoard,
+    getBoard: getBoard,
+    playMove: playMove,
+    checkBoard: checkBoard,
+    resetBoard: resetBoard,
   };
 })();
 
@@ -268,8 +206,8 @@ const displayController = ((game) => {
 
     // P1 container elements
     const p1NameInput = document.createElement('input');
-    p1NameInput.setAttribute('class','nameInput');
-    p1NameInput.setAttribute('data-player','1');
+    p1NameInput.setAttribute('class', 'nameInput');
+    p1NameInput.setAttribute('data-player', '1');
     p1NameInput.type = "name";
     p1NameInput.maxLength = 15;
     let p1AiInput = document.createElement('input');
@@ -281,8 +219,8 @@ const displayController = ((game) => {
 
     // P2 container elements
     const p2NameInput = document.createElement('input');
-    p2NameInput.setAttribute('class','nameInput');
-    p2NameInput.setAttribute('data-player','2');
+    p2NameInput.setAttribute('class', 'nameInput');
+    p2NameInput.setAttribute('data-player', '2');
     p2NameInput.type = "name";
     p2NameInput.maxLength = 15;
     let p2AiInput = document.createElement('input');
@@ -353,44 +291,44 @@ const displayController = ((game) => {
 
     for (let position of gameBoard.getBoard()) {
       // Increment count to set as data key for each spot
-      i ++
+      i++
       if (position == "X") {
-          let block = document.createElement('div');
-          block.setAttribute("class", "spot");
-          block.setAttribute("data-num", `${i}`);
-          block.textContent = "X";
-          boardBox.appendChild(block);
+        let block = document.createElement('div');
+        block.setAttribute("class", "spot");
+        block.setAttribute("data-num", `${i}`);
+        block.textContent = "X";
+        boardBox.appendChild(block);
       } else if (position == "O") {
-          let block = document.createElement('div');
-          block.setAttribute("class", "spot");
-          block.setAttribute("data-num", `${i}`);
-          block.textContent = "O";
-          boardBox.appendChild(block);
+        let block = document.createElement('div');
+        block.setAttribute("class", "spot");
+        block.setAttribute("data-num", `${i}`);
+        block.textContent = "O";
+        boardBox.appendChild(block);
       } else {
-          // Setup blank spot
-          let block = document.createElement('div');
-          block.setAttribute("class", "spot");
-          // Add listener to blank spots to await clicks on turn
-          block.addEventListener('click', (e) => {
-            let dataNum = e.srcElement.getAttribute("data-num")
-            if (gameBoard.playMove(game.currentPlayer, dataNum)) {
-              // If move works, swap player and re-render spot
-              let spot = document.querySelectorAll(`[data-num="${dataNum}"]`);
-              spot.textContent = game.currentPlayer.getToken
-              // Swap current player
-              if (game.currentPlayer == game.player1) {
-                game.currentPlayer = game.player2;
-                reRenderBoard(game);
-              } else {
-                game.currentPlayer = game.player1;
-                reRenderBoard(game);
-              }
+        // Setup blank spot
+        let block = document.createElement('div');
+        block.setAttribute("class", "spot");
+        // Add listener to blank spots to await clicks on turn
+        block.addEventListener('click', (e) => {
+          let dataNum = e.srcElement.getAttribute("data-num")
+          if (gameBoard.playMove(game.currentPlayer, dataNum)) {
+            // If move works, swap player and re-render spot
+            let spot = document.querySelectorAll(`[data-num="${dataNum}"]`);
+            spot.textContent = game.currentPlayer.getToken
+            // Swap current player
+            if (game.currentPlayer == game.player1) {
+              game.currentPlayer = game.player2;
+              reRenderBoard(game);
             } else {
-              console.log("Invalid move");
+              game.currentPlayer = game.player1;
+              reRenderBoard(game);
             }
-          })
-          block.setAttribute("data-num", `${i}`);
-          boardBox.appendChild(block);
+          } else {
+            console.log("Invalid move");
+          }
+        })
+        block.setAttribute("data-num", `${i}`);
+        boardBox.appendChild(block);
       }
     }
 
@@ -413,12 +351,12 @@ const displayController = ((game) => {
     // change info in turn div to point to correct player
     _renderTurn(game, turnDiv);
     for (let child of boardBox.children) {
-        if (child.textContent === gameBoard.getBoard()[child.getAttribute("data-num")]) {
-          // Leave it as is if exact same
-        } else {
-          // Update text if its been changed by the recent move
-          child.textContent = gameBoard.getBoard()[child.getAttribute("data-num")]
-        }
+      if (child.textContent === gameBoard.getBoard()[child.getAttribute("data-num")]) {
+        // Leave it as is if exact same
+      } else {
+        // Update text if its been changed by the recent move
+        child.textContent = gameBoard.getBoard()[child.getAttribute("data-num")]
+      }
     }
 
     // Check if game has been won, if so _renderResults
@@ -431,7 +369,6 @@ const displayController = ((game) => {
     }
 
     // Check if current player is ai, if so make ai decide move and play it
-
     if (game.currentPlayer.isBot()) {
       aiLogic.playMove(game);
     }
@@ -526,16 +463,13 @@ const displayController = ((game) => {
     turnText.textContent = 'Your Turn';
     // append new elements
     turnDiv.appendChild(turnText);
-    // let arrow = document.createElement('i'); UNCOMMENT THIS WHEN ON INETERNET
-    let arrow = document.createElement('p'); // comment this out when on internet
+    let arrow = document.createElement('i');
 
     if (game.currentPlayer == game.player1) {
       arrow.setAttribute('class', 'fas fa-arrow-left');
-      arrow.textContent = '<'; // Comment this out when connetect
       turnText.insertAdjacentElement("afterend", arrow);
     } else {
       arrow.setAttribute('class', 'fas fa-arrow-right');
-      arrow.textContent = '>'; // Comment this out when connetect
       turnText.insertAdjacentElement("afterend", arrow);
     }
   }
@@ -612,11 +546,11 @@ const aiLogic = (() => {
   // Play move given board
   const playMove = (game) => {
     // Check to see best move given board
-    let move = _bestMove();
+    let move = _bestMove(game);
     let player = game.currentPlayer;
     console.log("Im going to play my best move!")
     // Play move based on results of best move
-    console.log(move);
+    console.log(`my move index: ${move}`);
     if (gameBoard.playMove(player, move)) {
       // Once move made, swap player and re-render spot
       console.log("I did it!")
@@ -633,58 +567,160 @@ const aiLogic = (() => {
     }
   }
 
+  // Minimax function to calculate best move given board.
+  const _minimax = (newBoard, player, game) => {
+
+    // Establish who is the current player so we know who to optimize for
+    switch (player) {
+      case game.player1:
+        enemy = game.player2;
+        break;
+      case game.player2:
+        enemy = game.player1;
+        break;
+    }
+
+    // Return list of open spots by index based on current board.
+    let availSpots = newBoard.map((num, index) => {
+      if (num == "") {
+        return index;
+      }
+    }).filter((a) => a != undefined);
+
+    console.log(newBoard)
+    // Check to see if current board is won by anyone, rate accordingly
+    // This will be our return if we have hit terminal end case and need to rank
+    // result. Collect these results for each avail spot and choose best
+    if (_checkWin(newBoard, player.getToken())) {
+      // Positive restult of cp winning, rate high
+      return {
+        score: 10
+      };
+    } else if (_checkWin(newBoard, enemy.getToken())) {
+      // enemy win, rank low
+      return {
+        score: -10
+      };
+    } else if (availSpots.length === 0) {
+      // No spots left, tie game, neutral rating
+      return {
+        score: 0
+      };
+    }
+
+    // Collect the moves as objects, includes index and score
+    let moves = [];
+    for (let i = 0; i < availSpots.length; i++) {
+      let move = {};
+      move.index = availSpots[i];
+
+      newBoard[availSpots[i]] = player.getToken();
+
+      if (player == game.player1) {
+        let result = _minimax(newBoard, game.player2, game);
+        move.score = result.score;
+        console.log(`Move index: ${move.index}`)
+        console.log(`Move score: ${move.score}`)
+
+      } else {
+        let result = _minimax(newBoard, game.player1, game);
+        move.score = result.score;
+        console.log(`Move index: ${move.index}`)
+        console.log(`Move score: ${move.score}`)
+
+      }
+
+      newBoard[availSpots[i]] = "";
+      moves.push(move);
+    }
+
+    // Evaluate best move from our moves array
+    let bestMove;
+    if (player == game.currentPlayer) {
+      let bestScore = -10000;
+      for (let i = 0; i < moves.length; i++) {
+        if (moves[i].score > bestScore) {
+          bestScore = moves[i].score;
+          bestMove = i;
+        }
+      }
+    } else {
+      let bestScore = 10000;
+      for (let i = 0; i < moves.length; i++) {
+        if (moves[i].score < bestScore) {
+          bestScore = moves[i].score;
+          bestMove = i;
+        }
+      }
+    }
+    console.log(`my moves: ${moves}`)
+
+
+    return moves[bestMove];
+
+  }
+
   // Calculate best move given board
-  const _bestMove = () => {
+  const _bestMove = (game) => {
     let currentBoard = gameBoard.getBoard();
 
-    const isEmpty = (currentValue) => currentValue == "";
+    if (currentBoard.every((e) => e == "")) {
+      // If board is empty, choose middle (All spots available)
+      return 4;
+    } else {
+      // Check for optimum move here and return number at which to play
+      // Currently just gets the next open spot and plays there
+      // Utilizing MinMax fucntion here to get unbratable AI
+      // get the index value of the object minimax returns(also includes winner)
+      return _minimax(currentBoard, game.currentPlayer, game).index;
+    };
 
+  }
 
+  // function to check if board has been won by player
+  const _checkWin = (board, player) => {
+    const winCombos = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [6, 4, 2],
+    ]
 
+    // Find all indexes a player has played in to compare to winning combos
+    let plays = board.reduce((a, e, i) =>
+  		(e == player) ? a.concat(i) : a, []);
+    let gameWon = null;
 
+    // Has player played in every spot in the a wincombo element. if so, player
+    // has won
+    for (let [index, win] of winCombos.entries()) {
+      if (win.every(elem => plays.indexOf(elem) > -1)) {
+        // If so return winning player and index
+        gameWon = {
+          index: index,
+          player: player
+        };
+        console.log(gameWon.player)
+        break;
+      }
+    }
 
-    // if (currentBoard.every(isEmpty)) {
-    //   // If board is empty, choose middle
-    //   return 4;
-    // } else {
-    //   // Check for optimum move here and return number at which to play TODO
-    //   // Currently just gets the next open spot and plays there
-    //   let move = 0;
-    //   let winningIndex = false;
-    //   const _winningMove = (board, index) => {
-    //     return false;
-    //   }
-    //   const _savingMove = (board, index) => {
-    //     return false;
-    //   }
-    //
-    //   if (_winningMove(currentBoard, winningIndex)) {
-    //     // Index of winning move if one present
-    //   } else if (_savingMove(currentBoard, winningIndex)) {
-    //     // Move to block if present
-    //   } else {
-    //     // Else optimize to best move to get clse to 3
-    //
-    //   }
-    //
-    // };
-    // DUMB RESPONSE BELOW, GET BETTER ANSWER ABOVE
-    return currentBoard.indexOf("");
-
-
-
+    // If no winner, null return, else return player
+    return gameWon;
   }
 
   // Expose public functions
   return {
     playMove: playMove,
   }
+
 })();
+
+
 
 // Render welcome screen on load
 document.onload = displayController.renderWelcome();
-
-
-// To Do:
-//  4. Build AI logic
-//  4a. Hook login into game loop if player isBot is true, (even allow AI v AI)
