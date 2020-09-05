@@ -492,7 +492,6 @@ const displayController = ((game) => {
     // Setup title text based on outcome.
     if (status == 'win') {
       // Current player is winner, render a winner screen with our options to restart
-      console.log('Render a winner')
       if (game.currentPlayer == game.player1) {
         resultTitle.textContent = `${game.player2.getName()} wins!`;
       } else {
@@ -500,7 +499,6 @@ const displayController = ((game) => {
       }
     } else {
       // Tie game, render a draw screen with our options to restart
-      console.log('Render a draw')
       resultTitle.textContent = "Draw!";
     }
 
@@ -548,12 +546,10 @@ const aiLogic = (() => {
     // Check to see best move given board
     let move = _bestMove(game);
     let player = game.currentPlayer;
-    console.log("Im going to play my best move!")
+
     // Play move based on results of best move
-    console.log(`my move index: ${move}`);
     if (gameBoard.playMove(player, move)) {
       // Once move made, swap player and re-render spot
-      console.log("I did it!")
       let spot = document.querySelectorAll(`[data-num="${move}"]`);
       spot.textContent = player.getToken
       // Swap current player
@@ -587,11 +583,10 @@ const aiLogic = (() => {
       }
     }).filter((a) => a != undefined);
 
-    console.log(newBoard)
     // Check to see if current board is won by anyone, rate accordingly
     // This will be our return if we have hit terminal end case and need to rank
     // result. Collect these results for each avail spot and choose best
-    if (_checkWin(newBoard, player.getToken())) {
+    if (_checkWin(newBoard, game.currentPlayer.getToken())) {
       // Positive restult of cp winning, rate high
       return {
         score: 10
@@ -619,15 +614,9 @@ const aiLogic = (() => {
       if (player == game.player1) {
         let result = _minimax(newBoard, game.player2, game);
         move.score = result.score;
-        console.log(`Move index: ${move.index}`)
-        console.log(`Move score: ${move.score}`)
-
       } else {
         let result = _minimax(newBoard, game.player1, game);
         move.score = result.score;
-        console.log(`Move index: ${move.index}`)
-        console.log(`Move score: ${move.score}`)
-
       }
 
       newBoard[availSpots[i]] = "";
@@ -653,8 +642,6 @@ const aiLogic = (() => {
         }
       }
     }
-    console.log(`my moves: ${moves}`)
-
 
     return moves[bestMove];
 
@@ -666,7 +653,7 @@ const aiLogic = (() => {
 
     if (currentBoard.every((e) => e == "")) {
       // If board is empty, choose middle (All spots available)
-      return 4;
+      return Math.floor(Math.random() * 9);
     } else {
       // Check for optimum move here and return number at which to play
       // Currently just gets the next open spot and plays there
@@ -704,7 +691,6 @@ const aiLogic = (() => {
           index: index,
           player: player
         };
-        console.log(gameWon.player)
         break;
       }
     }
